@@ -1,0 +1,11 @@
+syntax="proto3";
+
+package greet;
+option go_package="./greetpb";
+
+import "greet_msg.proto";
+
+service GreetService {
+  // unary rpc api
+  rpc Greet(GreetRequest) returns (GreetResponse) {};
+}
