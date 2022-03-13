@@ -4,8 +4,8 @@ package sum;
 option go_package="./sumpb";
 
 message Sum {
-  string first_number = 1;
-  string second_number = 2;
+  int32 first_number = 1;
+  int32 second_number = 2;
 }
 
 message SumRequest {
@@ -13,5 +13,5 @@ message SumRequest {
 }
 
 message SumResponse {
-  string result = 1;
+  int32 result = 1;
 }
