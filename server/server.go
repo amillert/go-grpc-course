@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/amillert/go-grpc-course/grpc/greetpb"
+	"github.com/amillert/go-grpc-course/grpc/sumpb"
 )
 
 type server struct{}
@@ -18,6 +19,16 @@ func (*server) Greet(ctx context.Context, req *greetpb.GreetRequest) (*greetpb.G
 
 	firstName := req.GetGreeting().GetFirstName()
 	res := &greetpb.GreetResponse{Result: "Hello" + firstName}
+
+	return res, nil
+}
+
+func (*server) Sum(ctx context.Context, req *sumpb.SumRequest) (*sumpb.SumResponse, error) {
+	fmt.Printf("Sum invoked with %v\n", req)
+
+	firstNum, secondNum := req.GetSum().GetSecondNumber(), req.GetSum().GetSecondNumber()
+	res := &sumpb.SumResponse{Result: firstNum + secondNum}
+
 	return res, nil
 }
 
@@ -29,6 +40,7 @@ func main() {
 
 	s := grpc.NewServer()
 	greetpb.RegisterGreetServiceServer(s, &server{})
+	sumpb.RegisterSumServiceServer(s, &server{})
 
 	if err := s.Serve(l); err != nil {
 		log.Fatalf("Failed to serve %v", err)
