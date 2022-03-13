@@ -49,8 +49,8 @@ func main() {
 	}
 	defer cc.Close()
 
-	// gc := greetpb.NewGreetServiceClient(cc)
-	// callUnaryGreet(gc)
+	gc := greetpb.NewGreetServiceClient(cc)
+	callUnaryGreet(gc)
 
 	sc := sumpb.NewSumServiceClient(cc)
 	callUnarySum(sc)
