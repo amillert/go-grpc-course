@@ -1,0 +1,10 @@
+syntax="proto3";
+
+package sum;
+option go_package="./sumpb";
+
+import "sum_msg.proto";
+
+service SumService {
+  rpc Sum(SumRequest) returns (SumResponse) {};
+}
