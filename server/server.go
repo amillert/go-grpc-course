@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strconv"
+	"time"
 
 	"google.golang.org/grpc"
 
@@ -21,6 +23,23 @@ func (*server) Greet(ctx context.Context, req *greetpb.GreetRequest) (*greetpb.G
 	res := &greetpb.GreetResponse{Result: "Hello " + firstName}
 
 	return res, nil
+}
+
+func (*server) GreetMulti(req *greetpb.GreetMultiRequest, stream greetpb.GreetService_GreetMultiServer) error {
+	fmt.Printf("Greeting Multi invoked with %v\n", req)
+
+	firstName := req.GetGreeting().GetFirstName()
+
+	for i := 0; i < 10; i++ {
+		res := &greetpb.GreetMultiResponse{
+			Result: "Hello " + firstName + " number " + strconv.Itoa(i),
+		}
+
+		stream.Send(res)
+		time.Sleep(400 * time.Millisecond)
+	}
+
+	return nil
 }
 
 func (*server) Sum(ctx context.Context, req *sumpb.SumRequest) (*sumpb.SumResponse, error) {
