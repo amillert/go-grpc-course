@@ -24,6 +24,10 @@ const _ = grpc.SupportPackageIsVersion7
 type GreetServiceClient interface {
 	// unary rpc api
 	Greet(ctx context.Context, in *GreetRequest, opts ...grpc.CallOption) (*GreetResponse, error)
+	//* server streaming rpc api
+	// could have reused `GreetRequest` & `GreetResponse`
+	// but api can evolve over time
+	GreetMulti(ctx context.Context, in *GreetMultiRequest, opts ...grpc.CallOption) (GreetService_GreetMultiClient, error)
 }
 
 type greetServiceClient struct {
@@ -43,12 +47,48 @@ func (c *greetServiceClient) Greet(ctx context.Context, in *GreetRequest, opts .
 	return out, nil
 }
 
+func (c *greetServiceClient) GreetMulti(ctx context.Context, in *GreetMultiRequest, opts ...grpc.CallOption) (GreetService_GreetMultiClient, error) {
+	stream, err := c.cc.NewStream(ctx, &GreetService_ServiceDesc.Streams[0], "/greet.GreetService/GreetMulti", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &greetServiceGreetMultiClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type GreetService_GreetMultiClient interface {
+	Recv() (*GreetMultiResponse, error)
+	grpc.ClientStream
+}
+
+type greetServiceGreetMultiClient struct {
+	grpc.ClientStream
+}
+
+func (x *greetServiceGreetMultiClient) Recv() (*GreetMultiResponse, error) {
+	m := new(GreetMultiResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // GreetServiceServer is the server API for GreetService service.
 // All implementations should embed UnimplementedGreetServiceServer
 // for forward compatibility
 type GreetServiceServer interface {
 	// unary rpc api
 	Greet(context.Context, *GreetRequest) (*GreetResponse, error)
+	//* server streaming rpc api
+	// could have reused `GreetRequest` & `GreetResponse`
+	// but api can evolve over time
+	GreetMulti(*GreetMultiRequest, GreetService_GreetMultiServer) error
 }
 
 // UnimplementedGreetServiceServer should be embedded to have forward compatible implementations.
@@ -57,6 +97,9 @@ type UnimplementedGreetServiceServer struct {
 
 func (UnimplementedGreetServiceServer) Greet(context.Context, *GreetRequest) (*GreetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Greet not implemented")
+}
+func (UnimplementedGreetServiceServer) GreetMulti(*GreetMultiRequest, GreetService_GreetMultiServer) error {
+	return status.Errorf(codes.Unimplemented, "method GreetMulti not implemented")
 }
 
 // UnsafeGreetServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -88,6 +131,27 @@ func _GreetService_Greet_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GreetService_GreetMulti_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(GreetMultiRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(GreetServiceServer).GreetMulti(m, &greetServiceGreetMultiServer{stream})
+}
+
+type GreetService_GreetMultiServer interface {
+	Send(*GreetMultiResponse) error
+	grpc.ServerStream
+}
+
+type greetServiceGreetMultiServer struct {
+	grpc.ServerStream
+}
+
+func (x *greetServiceGreetMultiServer) Send(m *GreetMultiResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // GreetService_ServiceDesc is the grpc.ServiceDesc for GreetService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -100,6 +164,12 @@ var GreetService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _GreetService_Greet_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GreetMulti",
+			Handler:       _GreetService_GreetMulti_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "greet_svc.proto",
 }

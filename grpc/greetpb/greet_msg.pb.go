@@ -169,6 +169,100 @@ func (x *GreetResponse) GetResult() string {
 	return ""
 }
 
+type GreetMultiRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Greeting *Greeting `protobuf:"bytes,1,opt,name=greeting,proto3" json:"greeting,omitempty"`
+}
+
+func (x *GreetMultiRequest) Reset() {
+	*x = GreetMultiRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_greet_msg_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GreetMultiRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GreetMultiRequest) ProtoMessage() {}
+
+func (x *GreetMultiRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_greet_msg_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GreetMultiRequest.ProtoReflect.Descriptor instead.
+func (*GreetMultiRequest) Descriptor() ([]byte, []int) {
+	return file_greet_msg_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GreetMultiRequest) GetGreeting() *Greeting {
+	if x != nil {
+		return x.Greeting
+	}
+	return nil
+}
+
+type GreetMultiResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Result string `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+}
+
+func (x *GreetMultiResponse) Reset() {
+	*x = GreetMultiResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_greet_msg_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GreetMultiResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GreetMultiResponse) ProtoMessage() {}
+
+func (x *GreetMultiResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_greet_msg_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GreetMultiResponse.ProtoReflect.Descriptor instead.
+func (*GreetMultiResponse) Descriptor() ([]byte, []int) {
+	return file_greet_msg_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GreetMultiResponse) GetResult() string {
+	if x != nil {
+		return x.Result
+	}
+	return ""
+}
+
 var File_greet_msg_proto protoreflect.FileDescriptor
 
 var file_greet_msg_proto_rawDesc = []byte{
@@ -183,6 +277,13 @@ var file_greet_msg_proto_rawDesc = []byte{
 	0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x67, 0x72, 0x65, 0x65, 0x74, 0x2e, 0x47, 0x72, 0x65, 0x65, 0x74,
 	0x69, 0x6e, 0x67, 0x52, 0x08, 0x67, 0x72, 0x65, 0x65, 0x74, 0x69, 0x6e, 0x67, 0x22, 0x27, 0x0a,
 	0x0d, 0x47, 0x72, 0x65, 0x65, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16,
+	0x0a, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
+	0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x22, 0x40, 0x0a, 0x11, 0x47, 0x72, 0x65, 0x65, 0x74, 0x4d,
+	0x75, 0x6c, 0x74, 0x69, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2b, 0x0a, 0x08, 0x67,
+	0x72, 0x65, 0x65, 0x74, 0x69, 0x6e, 0x67, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e,
+	0x67, 0x72, 0x65, 0x65, 0x74, 0x2e, 0x47, 0x72, 0x65, 0x65, 0x74, 0x69, 0x6e, 0x67, 0x52, 0x08,
+	0x67, 0x72, 0x65, 0x65, 0x74, 0x69, 0x6e, 0x67, 0x22, 0x2c, 0x0a, 0x12, 0x47, 0x72, 0x65, 0x65,
+	0x74, 0x4d, 0x75, 0x6c, 0x74, 0x69, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16,
 	0x0a, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
 	0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x42, 0x0b, 0x5a, 0x09, 0x2e, 0x2f, 0x67, 0x72, 0x65, 0x65,
 	0x74, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
@@ -200,19 +301,22 @@ func file_greet_msg_proto_rawDescGZIP() []byte {
 	return file_greet_msg_proto_rawDescData
 }
 
-var file_greet_msg_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_greet_msg_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_greet_msg_proto_goTypes = []interface{}{
-	(*Greeting)(nil),      // 0: greet.Greeting
-	(*GreetRequest)(nil),  // 1: greet.GreetRequest
-	(*GreetResponse)(nil), // 2: greet.GreetResponse
+	(*Greeting)(nil),           // 0: greet.Greeting
+	(*GreetRequest)(nil),       // 1: greet.GreetRequest
+	(*GreetResponse)(nil),      // 2: greet.GreetResponse
+	(*GreetMultiRequest)(nil),  // 3: greet.GreetMultiRequest
+	(*GreetMultiResponse)(nil), // 4: greet.GreetMultiResponse
 }
 var file_greet_msg_proto_depIdxs = []int32{
 	0, // 0: greet.GreetRequest.greeting:type_name -> greet.Greeting
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // 1: greet.GreetMultiRequest.greeting:type_name -> greet.Greeting
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_greet_msg_proto_init() }
@@ -257,6 +361,30 @@ func file_greet_msg_proto_init() {
 				return nil
 			}
 		}
+		file_greet_msg_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GreetMultiRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_greet_msg_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GreetMultiResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -264,7 +392,7 @@ func file_greet_msg_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_greet_msg_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

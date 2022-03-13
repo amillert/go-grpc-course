@@ -8,4 +8,9 @@ import "greet_msg.proto";
 service GreetService {
   // unary rpc api
   rpc Greet(GreetRequest) returns (GreetResponse) {};
+
+  /** server streaming rpc api
+    * could have reused `GreetRequest` & `GreetResponse`
+    * but api can evolve over time */
+  rpc GreetMulti(GreetMultiRequest) returns (stream GreetMultiResponse) {};
 }
