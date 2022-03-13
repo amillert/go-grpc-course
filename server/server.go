@@ -8,7 +8,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/amillert/go-grpc-course/greet/grpc/greetpb"
+	"github.com/amillert/go-grpc-course/grpc/greetpb"
 )
 
 type server struct{}
