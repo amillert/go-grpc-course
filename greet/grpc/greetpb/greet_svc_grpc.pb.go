@@ -44,22 +44,20 @@ func (c *greetServiceClient) Greet(ctx context.Context, in *GreetRequest, opts .
 }
 
 // GreetServiceServer is the server API for GreetService service.
-// All implementations must embed UnimplementedGreetServiceServer
+// All implementations should embed UnimplementedGreetServiceServer
 // for forward compatibility
 type GreetServiceServer interface {
 	// unary rpc api
 	Greet(context.Context, *GreetRequest) (*GreetResponse, error)
-	mustEmbedUnimplementedGreetServiceServer()
 }
 
-// UnimplementedGreetServiceServer must be embedded to have forward compatible implementations.
+// UnimplementedGreetServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedGreetServiceServer struct {
 }
 
 func (UnimplementedGreetServiceServer) Greet(context.Context, *GreetRequest) (*GreetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Greet not implemented")
 }
-func (UnimplementedGreetServiceServer) mustEmbedUnimplementedGreetServiceServer() {}
 
 // UnsafeGreetServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to GreetServiceServer will
