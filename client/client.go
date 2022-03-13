@@ -6,11 +6,12 @@ import (
 	"log"
 
 	"github.com/amillert/go-grpc-course/grpc/greetpb"
+	"github.com/amillert/go-grpc-course/grpc/sumpb"
 	"google.golang.org/grpc"
 )
 
-func callUnary(c greetpb.GreetServiceClient) {
-	fmt.Println("Starting unary RPC")
+func callUnaryGreet(c greetpb.GreetServiceClient) {
+	fmt.Println("Starting unary greet RPC")
 
 	req := &greetpb.GreetRequest{
 		Greeting: &greetpb.Greeting{
@@ -23,7 +24,22 @@ func callUnary(c greetpb.GreetServiceClient) {
 		log.Fatalf("Errorw while calling Greet RPC: %v", err)
 	}
 	log.Printf("Response from Greet: %v", res.Result)
+}
 
+func callUnarySum(c sumpb.SumServiceClient) {
+	fmt.Println("Starting unary sum RPC")
+
+	req := &sumpb.SumRequest{
+		Sum: &sumpb.Sum{
+			FirstNumber:  10,
+			SecondNumber: 2,
+		},
+	}
+	res, err := c.Sum(context.Background(), req)
+	if err != nil {
+		log.Fatalf("Errorw while calling Sum RPC: %v", err)
+	}
+	log.Printf("Response from Sum: %v", res.Result)
 }
 
 func main() {
@@ -33,7 +49,9 @@ func main() {
 	}
 	defer cc.Close()
 
-	c := greetpb.NewGreetServiceClient(cc)
+	// gc := greetpb.NewGreetServiceClient(cc)
+	// callUnaryGreet(gc)
 
-	callUnary(c)
+	sc := sumpb.NewSumServiceClient(cc)
+	callUnarySum(sc)
 }
