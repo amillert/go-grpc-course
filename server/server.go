@@ -18,7 +18,7 @@ func (*server) Greet(ctx context.Context, req *greetpb.GreetRequest) (*greetpb.G
 	fmt.Printf("Greet invoked with %v\n", req)
 
 	firstName := req.GetGreeting().GetFirstName()
-	res := &greetpb.GreetResponse{Result: "Hello" + firstName}
+	res := &greetpb.GreetResponse{Result: "Hello " + firstName}
 
 	return res, nil
 }
@@ -26,7 +26,7 @@ func (*server) Greet(ctx context.Context, req *greetpb.GreetRequest) (*greetpb.G
 func (*server) Sum(ctx context.Context, req *sumpb.SumRequest) (*sumpb.SumResponse, error) {
 	fmt.Printf("Sum invoked with %v\n", req)
 
-	firstNum, secondNum := req.GetSum().GetSecondNumber(), req.GetSum().GetSecondNumber()
+	firstNum, secondNum := req.GetSum().GetFirstNumber(), req.GetSum().GetSecondNumber()
 	res := &sumpb.SumResponse{Result: firstNum + secondNum}
 
 	return res, nil
