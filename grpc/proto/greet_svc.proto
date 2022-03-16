@@ -12,7 +12,13 @@ service GreetService {
   /** server streaming rpc api
     * could have reused `GreetRequest` & `GreetResponse`
     * but api can evolve over time */
+
+  // server streaming
   rpc GreetMultiServer(GreetMultiRequest) returns (stream GreetMultiResponse) {};
 
+  // client streaming
   rpc GreetMultiClient(stream GreetMultiRequest) returns (GreetMultiResponse) {};
+
+  // BiDi streaming
+  rpc GreetEveryone(stream GreetMultiRequest) returns (stream GreetMultiResponse) {};
 }
