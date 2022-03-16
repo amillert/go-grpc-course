@@ -27,7 +27,8 @@ type GreetServiceClient interface {
 	//* server streaming rpc api
 	// could have reused `GreetRequest` & `GreetResponse`
 	// but api can evolve over time
-	GreetMulti(ctx context.Context, in *GreetMultiRequest, opts ...grpc.CallOption) (GreetService_GreetMultiClient, error)
+	GreetMultiServer(ctx context.Context, in *GreetMultiRequest, opts ...grpc.CallOption) (GreetService_GreetMultiServerClient, error)
+	GreetMultiClient(ctx context.Context, opts ...grpc.CallOption) (GreetService_GreetMultiClientClient, error)
 }
 
 type greetServiceClient struct {
@@ -47,12 +48,12 @@ func (c *greetServiceClient) Greet(ctx context.Context, in *GreetRequest, opts .
 	return out, nil
 }
 
-func (c *greetServiceClient) GreetMulti(ctx context.Context, in *GreetMultiRequest, opts ...grpc.CallOption) (GreetService_GreetMultiClient, error) {
-	stream, err := c.cc.NewStream(ctx, &GreetService_ServiceDesc.Streams[0], "/greet.GreetService/GreetMulti", opts...)
+func (c *greetServiceClient) GreetMultiServer(ctx context.Context, in *GreetMultiRequest, opts ...grpc.CallOption) (GreetService_GreetMultiServerClient, error) {
+	stream, err := c.cc.NewStream(ctx, &GreetService_ServiceDesc.Streams[0], "/greet.GreetService/GreetMultiServer", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &greetServiceGreetMultiClient{stream}
+	x := &greetServiceGreetMultiServerClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -62,16 +63,50 @@ func (c *greetServiceClient) GreetMulti(ctx context.Context, in *GreetMultiReque
 	return x, nil
 }
 
-type GreetService_GreetMultiClient interface {
+type GreetService_GreetMultiServerClient interface {
 	Recv() (*GreetMultiResponse, error)
 	grpc.ClientStream
 }
 
-type greetServiceGreetMultiClient struct {
+type greetServiceGreetMultiServerClient struct {
 	grpc.ClientStream
 }
 
-func (x *greetServiceGreetMultiClient) Recv() (*GreetMultiResponse, error) {
+func (x *greetServiceGreetMultiServerClient) Recv() (*GreetMultiResponse, error) {
+	m := new(GreetMultiResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *greetServiceClient) GreetMultiClient(ctx context.Context, opts ...grpc.CallOption) (GreetService_GreetMultiClientClient, error) {
+	stream, err := c.cc.NewStream(ctx, &GreetService_ServiceDesc.Streams[1], "/greet.GreetService/GreetMultiClient", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &greetServiceGreetMultiClientClient{stream}
+	return x, nil
+}
+
+type GreetService_GreetMultiClientClient interface {
+	Send(*GreetMultiRequest) error
+	CloseAndRecv() (*GreetMultiResponse, error)
+	grpc.ClientStream
+}
+
+type greetServiceGreetMultiClientClient struct {
+	grpc.ClientStream
+}
+
+func (x *greetServiceGreetMultiClientClient) Send(m *GreetMultiRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *greetServiceGreetMultiClientClient) CloseAndRecv() (*GreetMultiResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
 	m := new(GreetMultiResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -88,7 +123,8 @@ type GreetServiceServer interface {
 	//* server streaming rpc api
 	// could have reused `GreetRequest` & `GreetResponse`
 	// but api can evolve over time
-	GreetMulti(*GreetMultiRequest, GreetService_GreetMultiServer) error
+	GreetMultiServer(*GreetMultiRequest, GreetService_GreetMultiServerServer) error
+	GreetMultiClient(GreetService_GreetMultiClientServer) error
 }
 
 // UnimplementedGreetServiceServer should be embedded to have forward compatible implementations.
@@ -98,8 +134,11 @@ type UnimplementedGreetServiceServer struct {
 func (UnimplementedGreetServiceServer) Greet(context.Context, *GreetRequest) (*GreetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Greet not implemented")
 }
-func (UnimplementedGreetServiceServer) GreetMulti(*GreetMultiRequest, GreetService_GreetMultiServer) error {
-	return status.Errorf(codes.Unimplemented, "method GreetMulti not implemented")
+func (UnimplementedGreetServiceServer) GreetMultiServer(*GreetMultiRequest, GreetService_GreetMultiServerServer) error {
+	return status.Errorf(codes.Unimplemented, "method GreetMultiServer not implemented")
+}
+func (UnimplementedGreetServiceServer) GreetMultiClient(GreetService_GreetMultiClientServer) error {
+	return status.Errorf(codes.Unimplemented, "method GreetMultiClient not implemented")
 }
 
 // UnsafeGreetServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -131,25 +170,51 @@ func _GreetService_Greet_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GreetService_GreetMulti_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _GreetService_GreetMultiServer_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(GreetMultiRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(GreetServiceServer).GreetMulti(m, &greetServiceGreetMultiServer{stream})
+	return srv.(GreetServiceServer).GreetMultiServer(m, &greetServiceGreetMultiServerServer{stream})
 }
 
-type GreetService_GreetMultiServer interface {
+type GreetService_GreetMultiServerServer interface {
 	Send(*GreetMultiResponse) error
 	grpc.ServerStream
 }
 
-type greetServiceGreetMultiServer struct {
+type greetServiceGreetMultiServerServer struct {
 	grpc.ServerStream
 }
 
-func (x *greetServiceGreetMultiServer) Send(m *GreetMultiResponse) error {
+func (x *greetServiceGreetMultiServerServer) Send(m *GreetMultiResponse) error {
 	return x.ServerStream.SendMsg(m)
+}
+
+func _GreetService_GreetMultiClient_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(GreetServiceServer).GreetMultiClient(&greetServiceGreetMultiClientServer{stream})
+}
+
+type GreetService_GreetMultiClientServer interface {
+	SendAndClose(*GreetMultiResponse) error
+	Recv() (*GreetMultiRequest, error)
+	grpc.ServerStream
+}
+
+type greetServiceGreetMultiClientServer struct {
+	grpc.ServerStream
+}
+
+func (x *greetServiceGreetMultiClientServer) SendAndClose(m *GreetMultiResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *greetServiceGreetMultiClientServer) Recv() (*GreetMultiRequest, error) {
+	m := new(GreetMultiRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // GreetService_ServiceDesc is the grpc.ServiceDesc for GreetService service.
@@ -166,9 +231,14 @@ var GreetService_ServiceDesc = grpc.ServiceDesc{
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "GreetMulti",
-			Handler:       _GreetService_GreetMulti_Handler,
+			StreamName:    "GreetMultiServer",
+			Handler:       _GreetService_GreetMultiServer_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "GreetMultiClient",
+			Handler:       _GreetService_GreetMultiClient_Handler,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "greet_svc.proto",
