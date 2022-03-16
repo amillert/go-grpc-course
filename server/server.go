@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"strconv"
@@ -25,8 +26,8 @@ func (*server) Greet(ctx context.Context, req *greetpb.GreetRequest) (*greetpb.G
 	return res, nil
 }
 
-func (*server) GreetMulti(req *greetpb.GreetMultiRequest, stream greetpb.GreetService_GreetMultiServer) error {
-	fmt.Printf("Greeting Multi invoked with %v\n", req)
+func (*server) GreetMultiServer(req *greetpb.GreetMultiRequest, stream greetpb.GreetService_GreetMultiServerServer) error {
+	fmt.Printf("Greeting Multi Server invoked with %v\n", req)
 
 	firstName := req.GetGreeting().GetFirstName()
 
@@ -40,6 +41,29 @@ func (*server) GreetMulti(req *greetpb.GreetMultiRequest, stream greetpb.GreetSe
 	}
 
 	return nil
+}
+
+func (*server) GreetMultiClient(stream greetpb.GreetService_GreetMultiClientServer) error {
+	fmt.Printf("Greeting Multi Client invoked with a streaming request\n")
+
+	res := "Hello "
+
+	for {
+		req, err := stream.Recv()
+		if err == io.EOF {
+			// finished reading client stream
+			// fmt.Println("Done reading client stream")
+
+			return stream.SendAndClose(&greetpb.GreetMultiResponse{
+				Result: res,
+			})
+		} else if err != nil {
+			log.Fatalf("Error while reading client stream: %v", err)
+		} else {
+			firstName := req.GetGreeting().GetFirstName()
+			res += firstName + "! "
+		}
+	}
 }
 
 func (*server) Sum(ctx context.Context, req *sumpb.SumRequest) (*sumpb.SumResponse, error) {
